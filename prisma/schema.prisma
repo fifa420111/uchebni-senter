@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id           Int          @id @default(autoincrement())
+  organization String
+  parentId     Int
+  active       Boolean
+  parent       Organization @relation(fields: [parentId], references: [id], name: "parent_organizations")
+
+  Organizations Organization[] @relation(name: "parent_organizations")
+  User         User[]
+}
+
+model User {
+  id             Int          @id @default(autoincrement())
+  fullName       String
+  username       String       @unique
+  organizationId Int
+  active         Boolean @default(true)
+  organization   Organization @relation(fields: [organizationId], references: [id])
+}
+
+model user_postition {
+  id       Int     @id @default(autoincrement())
+  position String
+  active   Boolean
+}
